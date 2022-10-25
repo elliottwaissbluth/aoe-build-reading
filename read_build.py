@@ -58,7 +58,6 @@ class BuildOrder:
                     console.print(tip, justify='center')
                 console.print('\n')
 
-            console.print(self.text[i])
             start = time.time()
             for utt in self.text[i]:
                 engine.say(utt)
@@ -75,36 +74,36 @@ if __name__ == '__main__':
         civ = 'English',
         name = '2 2 2',
         description = 'description',
-        timestamps = [0, 95, 125, 240, 340, 365, 480],
+        timestamps = [0, 25, 95, 125, 240, 340, 365, 480],
         text = [
             [
-                'Send the scout running to find sheep, send 2 vills to sheep, \
-                 two vills to wood, and 2 vills to sheep',
-                'build a lumber camp with a wood vill, and a mining camp with \
-                a mining vill',
-                'send a sheep vill to make a house, then a mill, behind  the  \
-                 TC, then send back to sheep'
+                'Send the scout running to find sheep, send 2 vills to sheep, 2 vills to wood, and 2 vills to Gold',
+                'build a lumber camp with a wood vill, and a mining camp with a mining vill',
+                'send a sheep vill to make a house, then a mill, behind  the  TC, then send back to sheep'
              ],
+            [
+                'Send the first created villager to Gold',
+                'Send the rest of the new villagers to gather food from farms near the mill\'s influence'
+            ],
             [
                 'Research wheelbarrow from the mill'
             ],
             [
                 'Build a farm with a food vill',
-                'Rally vills to sheep, transfer them from sheep to farm once \
-                you have 37 wood'
+                'Rally vills to sheep, transfer them from sheep to farm once you have 37 wood'
             ],
             [
-                'With three food, age up with council hall',
-                'send the 4 food vills on sheep to wood',
-                'rally to wood, slowly add some farms'
+                'Age up with council hall',
             ],
             [
-                'Build a barracks once the council hall is getting close to  \
-                 finished'
+                'Build a barracks once the council hall is getting close to finished',
+                'Train spearman with the barracks',
             ],
             [
-                'Research Double Broadaxe',
-                'Produce longbows and spears and begin to push'
+                'Once in the Feudal Age, get 6 vills on Gold, ten vills on Wood',
+                'Continue building Farms around mills, build more mills if needed',
+                'Research Double Broadaxe at the lumber camp',
+                'Train longbows at the council hall'
             ],
             [
                 'Build a blacksmith'
