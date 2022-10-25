@@ -1,6 +1,3 @@
-from email import header
-import os
-import sys
 import time
 import pyttsx3
 from typing import List
@@ -21,11 +18,6 @@ class BuildOrder:
     text: List[List[str]] = field(default_factory=list)
     
     def read_aloud(self):
-        # The gaps in time determine when the actions are read
-        gaps = [self.timestamps[t+1] - self.timestamps[t] 
-                for t in range(len(self.timestamps[1:]))]
-        gaps.insert(0, 0)
-        
         # speech engine
         engine = pyttsx3.init()
 
@@ -34,34 +26,47 @@ class BuildOrder:
         header_style = Style(color='#D300FF', bold=True)   
 
         # Cycle through building tips
-        for i,g in enumerate(gaps):
+        time_spent_giving_tips = 0
+        for i,s in enumerate(self.timestamps):
             # sleep for <gap> seconds
-            time.sleep(g)
+            # the first instructions will play immediately
+            gap = 0
+            if i > 0:
+                gap = self.timestamps[i] - self.timestamps[i-1]
+            time.sleep(gap-time_spent_giving_tips)              
 
             # Print tips to console
-            # Get time in readable format
-            if i == 0:
-                g_formatted = str(datetime.timedelta(seconds=self.timestamps[i]))
-                timeline_md = f'## Timeline for {g_formatted} seconds'
+            # The first and second set of tips will be displayed immediately for
+            #   the player to look forward
+            if i == 0: # Print the first tip
+                # format time and display across top
+                s_formatted = str(datetime.timedelta(seconds=s))
+                timeline_md = f'## ~~~~~~~~~~ {s_formatted[3:]} ~~~~~~~~~~'
                 console.print(Markdown(timeline_md), style=header_style)
-                for tip in self.text[i]:
+                for tip in self.text[0]:
                     console.print(tip, justify='center')
                 console.print('\n')
             
-            if i != len(gaps)-1:
-                g_formatted = str(datetime.timedelta(seconds=self.timestamps[i+1]))
-                timeline_md = f'## Timeline for {g_formatted} seconds'
+            # Print the subsequent tips
+            if i < len(self.timestamps) - 1:
+                s_formatted = str(datetime.timedelta(
+                                        seconds=self.timestamps[i+1]
+                                        ))
+                timeline_md = f'## ~~~~~~~~~~ {s_formatted[3:]} ~~~~~~~~~~'
                 console.print(Markdown(timeline_md), style=header_style)
                 for tip in self.text[i+1]:
                     console.print(tip, justify='center')
                 console.print('\n')
 
-            # Save utterance to file and immediately open and read
-            full_utterance = [x + ' ' for x in self.text[i]]
-            for utt in full_utterance:
+            console.print(self.text[i])
+            start = time.time()
+            for utt in self.text[i]:
                 engine.say(utt)
                 engine.runAndWait()
                 time.sleep(1.5)
+            end = time.time()
+            time_spent_giving_tips = end - start
+
 
 if __name__ == '__main__':
 
@@ -72,20 +77,38 @@ if __name__ == '__main__':
         description = 'description',
         timestamps = [0, 95, 125, 240, 340, 365, 480],
         text = [
-            ['Send the scout running to find sheep',
-            '2 vills to wood, 2 vills to gold (build lumber camp and mining camp',
-            '1 vill to make house then mill behind TC, then back to sheep)'],
-            ['Research wheelbarrow'],
-            ['Build a farm with a food vill',
-            'Rally vills to sheep, transfer them from sheep to farm once you have \
-            37 wood'],
-            ['With three food, age up with council hall',
-            'send the 4 food vills on sheep to wood',
-            'rally to wood, slowly add some farms'],
-            ['Build a barracks once the council hall is getting close to finished'],
-            ['Research Double Broadaxe',
-            'Produce longbows and spears and begin to push'],
-            ['Build a blacksmith']
+            [
+                'Send the scout running to find sheep, send 2 vills to sheep, \
+                 two vills to wood, and 2 vills to sheep',
+                'build a lumber camp with a wood vill, and a mining camp with \
+                a mining vill',
+                'send a sheep vill to make a house, then a mill, behind  the  \
+                 TC, then send back to sheep'
+             ],
+            [
+                'Research wheelbarrow from the mill'
+            ],
+            [
+                'Build a farm with a food vill',
+                'Rally vills to sheep, transfer them from sheep to farm once \
+                you have 37 wood'
+            ],
+            [
+                'With three food, age up with council hall',
+                'send the 4 food vills on sheep to wood',
+                'rally to wood, slowly add some farms'
+            ],
+            [
+                'Build a barracks once the council hall is getting close to  \
+                 finished'
+            ],
+            [
+                'Research Double Broadaxe',
+                'Produce longbows and spears and begin to push'
+            ],
+            [
+                'Build a blacksmith'
+            ]
         ],
     )
 
